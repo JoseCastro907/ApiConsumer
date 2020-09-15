@@ -3,6 +3,7 @@ package cr.ac.ucr.apiconsumer.api;
 import androidx.annotation.NonNull;
 
 import java.io.IOException;
+import java.util.Locale;
 
 import okhttp3.HttpUrl;
 import okhttp3.Interceptor;
@@ -16,18 +17,21 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class RetrofitBuilder {
 
     private final static String BASE_URL = "https://api.openweathermap.org/data/2.5/";
-    private final static String API_KEY = "d4102537ad990c303e444aa5ecc0a10f";
+    private final static String API_KEY = "f0d3bd0f43de1baee415ae9a7a3cdf9f";
 
     private static final OkHttpClient client = buildClient();
     private static final Retrofit retrofit = buildRetrofit(client);
 
-
     private static OkHttpClient buildClient(){
-        final OkHttpClient.Builder builder = new OkHttpClient.Builder()
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(new Interceptor() {
+
                     @NonNull
                     @Override
                     public Response intercept(@NonNull Chain chain) throws IOException {
+
+                        String lang = Locale.getDefault().getLanguage(); // es o en dependiendo del idioma del cel.
 
                         Request original = chain.request();
 
@@ -36,25 +40,30 @@ public class RetrofitBuilder {
                         HttpUrl newUrl = url.newBuilder()
                                 .addQueryParameter("appid", API_KEY)
                                 .addQueryParameter("units", "metric")
+                                .addQueryParameter("lang", lang)
                                 .build();
+
+
+
 
                         Request.Builder builder = original.newBuilder().url(newUrl);
                         Request request = builder.build();
 
                         return chain.proceed(request);
                     }
-                });
+                })
+                ;
 
         return builder.build();
     }
 
     private static Retrofit buildRetrofit(@NonNull OkHttpClient okHttpClient){
         return new Retrofit.Builder()
-                    .baseUrl(BASE_URL)
-                    .client(okHttpClient)
-                    .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
+                .baseUrl(BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
     }
 
     public static <T> T createService(final Class<T> service){

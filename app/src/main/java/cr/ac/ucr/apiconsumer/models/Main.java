@@ -19,9 +19,7 @@ public class Main {
         this.temp_max = temp_max;
     }
 
-    public float getTemp() {
-        return temp;
-    }
+    public float getTemp() { return temp; }
 
     public void setTemp(float temp) {
         this.temp = temp;

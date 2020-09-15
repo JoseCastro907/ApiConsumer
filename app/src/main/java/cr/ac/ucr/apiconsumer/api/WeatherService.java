@@ -9,7 +9,7 @@ import retrofit2.http.Query;
 public interface WeatherService {
 
     @Headers("Content-Type: application/json")
-    @GET("Weather")
+    @GET("weather")
     Call<WeatherResponse> getWeatherByCoordinates(@Query("lat") double lat, @Query("lon") double lon);
 
 }
